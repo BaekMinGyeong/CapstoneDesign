@@ -1,0 +1,402 @@
+:root {
+    /* 고정된 폰트 사이즈 정의 (rem 기반) */
+    font-size: 16px; /* 1rem = 16px */
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5;
+    display: flex;
+    overflow: hidden; /* 전체 페이지 스크롤바 방지 */
+    font-size: 1rem; /* 기본 폰트 사이즈 설정 */
+}
+
+.container {
+    display: flex;
+    width: 100vw; /* 뷰포트 너비 고정 */
+    height: 100vh; /* 뷰포트 높이 고정 */
+}
+
+/* 사이드바 - 오버레이 방식으로 변경 */
+.sidebar {
+    width: 250px; /* 고정 너비 */
+    background-color: #333;
+    color: white;
+    transform: translateX(-250px); /* 초기 숨김 */
+    transition: transform 0.3s ease-in-out;
+    position: fixed; /* 뷰포트에 고정 */
+    height: 100%;
+    z-index: 1000; /* 메인 콘텐츠 위로 */
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+}
+
+.sidebar.active {
+    transform: translateX(0);
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+}
+
+.sidebar-menu-item {
+    background: none;
+    border: none;
+    color: white;
+    padding: 15px 20px;
+    text-align: left;
+    font-size: 1.1rem; /* rem 단위 사용 */
+    cursor: pointer;
+    transition: background-color 0.2s;
+    width: 100%; /* 버튼 너비를 꽉 채우도록 */
+    box-sizing: border-box; /* 패딩 포함 너비 계산 */
+}
+
+.sidebar-menu-item:hover {
+    background-color: #555;
+}
+
+/* 메인 콘텐츠 영역 */
+.main-content {
+    flex-grow: 1;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    position: relative; /* 사이드바 버튼 위치 조정을 위해 */
+    overflow-y: auto; /* 콘텐츠가 길어질 경우 스크롤 허용 */
+}
+
+/* 사이드바 토글 버튼 - 항상 고정된 위치에 */
+.sidebar-toggle-btn {
+    background-color: #FFD700; /* 노란색 */
+    border: none;
+    width: 40px; /* 고정 크기 */
+    height: 40px; /* 고정 크기 */
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    padding: 8px;
+    cursor: pointer;
+    position: fixed; /* 뷰포트에 고정 */
+    top: 10px; /* 상단에서 10px */
+    left: 10px; /* 좌측에서 10px */
+    z-index: 1001; /* 사이드바보다 위에 (사이드바 z-index: 1000) */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* 그림자 추가 */
+}
+
+.bar {
+    width: 25px; /* 고정 크기 */
+    height: 3px; /* 고정 크기 */
+    background-color: #333;
+    border-radius: 2px;
+}
+
+/* 콘텐츠 영역 */
+.content-area {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+    padding-top: 70px; /* 버튼 공간 확보 (top: 10px + height: 40px + some margin) */
+}
+
+/* 이미지 첨부 전 화면 */
+.upload-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.upload-section:not(.active) {
+    display: none;
+}
+
+.upload-button {
+    background-color: #FFD700;
+    border: none;
+    padding: 15px 30px; /* 고정 패딩 */
+    border-radius: 25px;
+    font-size: 1.2rem; /* rem 단위 */
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.upload-button:hover {
+    background-color: #e0c200;
+    transform: translateY(-2px);
+}
+
+.file-name {
+    margin-top: 10px;
+    font-size: 0.9rem; /* rem 단위 */
+    color: #666;
+    height: 1.2em; /* 공간 확보 */
+}
+
+.upload-info {
+    font-size: 0.8rem; /* rem 단위 */
+    color: #999;
+    margin-top: 5px;
+}
+
+/* 이미지 첨부 후 옵션 선택 화면 */
+.options-section {
+    display: flex;
+    flex-direction: column; /* 기본적으로 세로 배치 (큰 틀) */
+    align-items: center; /* 수평 가운데 정렬 */
+    width: 100%;
+    max-width: 900px; /* 전체 섹션의 최대 너비 확장 */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.options-section:not(.active) {
+    display: none;
+}
+
+/* 이미지 첨부 및 미리보기 영역 */
+.image-upload-area {
+    display: flex;
+    flex-direction: row; /* 이미지 미리보기와 컨트롤을 가로로 */
+    align-items: center;
+    gap: 20px; /* 미리보기와 컨트롤 사이 간격 */
+    margin-bottom: 20px;
+    width: 100%;
+    justify-content: center; /* 가운데 정렬 */
+}
+
+.image-preview-after {
+    width: 150px; /* 고정 크기 */
+    height: 100px; /* 고정 크기 */
+    border: 1px solid #ddd;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    flex-shrink: 0; /* 축소되지 않도록 */
+}
+.image-preview-after::before {
+    content: "이미지 미리보기";
+    color: #ccc;
+    font-size: 0.9rem;
+}
+.image-preview-after.has-image::before {
+    content: none;
+}
+
+.image-upload-controls {
+    display: flex;
+    flex-direction: column; /* 버튼과 파일 이름을 세로로 */
+    align-items: flex-start; /* 좌측 정렬 */
+}
+
+.upload-button-small {
+    background-color: #FFD700;
+    border: none;
+    padding: 8px 15px; /* 고정 패딩 */
+    border-radius: 20px;
+    font-size: 0.9rem; /* rem 단위 */
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* 그림자 추가 */
+}
+
+.file-name-after {
+    font-size: 0.8rem; /* rem 단위 */
+    color: #666;
+    margin-top: 5px;
+}
+
+/* 선택지 그룹 전체를 감싸는 래퍼 (가로 배치 유도) */
+.options-group-wrapper {
+    display: flex;
+    flex-direction: row; /* 옵션 그룹과 추가 요구사항을 가로로 배치 */
+    flex-wrap: wrap; /* 공간 부족 시 다음 줄로 */
+    justify-content: center;
+    gap: 20px; /* 큰 섹션들 간의 간격 */
+    width: 100%;
+}
+
+/* 옵션 그룹 (테마, 분위기 등) 가로 배치 */
+.options-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* 가운데 정렬 */
+    gap: 20px; /* 항목 간 간격 */
+    width: 100%;
+    flex-grow: 1; /* 가용한 공간을 최대한 활용 */
+    max-width: 600px; /* 옵션 그룹 자체의 최대 너비 */
+}
+
+.option-box {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    min-width: 180px; /* 최소 너비 고정 */
+    max-width: 250px; /* 최대 너비 설정하여 너무 커지지 않도록 */
+    flex-basis: calc(33.333% - 20px); /* 3개씩 나열될 수 있도록 (gap 고려) */
+    box-sizing: border-box; /* 패딩 포함 너비 계산 */
+    display: flex;
+    flex-direction: column;
+}
+
+/* 작은 화면에서 옵션 박스 너비 조정 */
+@media (max-width: 768px) {
+    .option-box {
+        flex-basis: calc(50% - 20px); /* 2개씩 나열 */
+    }
+}
+
+@media (max-width: 480px) {
+    .option-box {
+        flex-basis: 100%; /* 1개씩 나열 */
+    }
+}
+
+
+.option-box h3 {
+    margin-top: 0;
+    color: #333;
+    font-size: 1.1rem; /* rem 단위 */
+    margin-bottom: 10px;
+}
+
+.option-box label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    cursor: pointer;
+    font-size: 0.95rem; /* rem 단위 */
+}
+
+.option-box input[type="radio"] {
+    margin-right: 8px;
+    transform: scale(1.1); /* 라디오 버튼 크기 살짝 키우기 */
+}
+
+/* 추가 요구사항 */
+.additional-requirements {
+    margin-top: 0; /* options-group-wrapper에서 간격 처리 */
+    width: 100%;
+    max-width: 400px; /* 최대 너비 */
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    flex-grow: 1; /* 남은 공간을 채우도록 */
+    box-sizing: border-box;
+}
+
+.additional-requirements h3 {
+    margin-top: 0;
+    color: #333;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+.add-req-btn-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.add-req-btn {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    width: 35px; /* 고정 크기 */
+    height: 35px; /* 고정 크기 */
+    border-radius: 50%;
+    font-size: 1.5rem; /* rem 단위 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.add-req-btn:hover {
+    background-color: #218838;
+}
+
+.req-field-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.req-field-group input[type="text"] {
+    flex-grow: 1;
+    padding: 8px 10px; /* 고정 패딩 */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 10px;
+    font-size: 0.95rem; /* rem 단위 */
+}
+
+.delete-req-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    width: 25px; /* 고정 크기 */
+    height: 25px; /* 고정 크기 */
+    border-radius: 50%;
+    font-size: 0.9rem; /* rem 단위 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.delete-req-btn:hover {
+    background-color: #c82333;
+}
+
+.image-size-selection select {
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 0.95rem; /* rem 단위 */
+    width: 100%; /* 부모 너비에 맞춤 */
+    box-sizing: border-box;
+    margin-top: 5px; /* select 상단 여백 */
+}
+
+.generate-button {
+    background-color: #FFD700;
+    border: none;
+    padding: 15px 40px; /* 고정 패딩 */
+    border-radius: 25px;
+    font-size: 1.3rem; /* rem 단위 */
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 30px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transition: background-color 0.2s, transform 0.2s;
+    flex-shrink: 0; /* 축소되지 않도록 */
+}
+
+.generate-button:hover {
+    background-color: #e0c200;
+    transform: translateY(-3px);
+}
